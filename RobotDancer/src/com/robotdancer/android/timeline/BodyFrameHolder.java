@@ -27,10 +27,10 @@ public class BodyFrameHolder extends AbstractFrameHolder {
 	// Getter & Setter
 	// ===========================================================
 	
-	public void setAngleAt(int pSecond, float pAngle){
+	public void setPositionAt(int pSecond, float pAngle){
 		mEntityPosition[pSecond] = pAngle;
 	}
-	public float getAngleAt(int pSecond){
+	public float getPositioneAt(int pSecond){
 		return mEntityPosition[pSecond];
 	}
 	

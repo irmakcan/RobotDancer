@@ -24,7 +24,9 @@ public class TimeLine {
 	
 	// Singleton
 	private TimeLine() {
-
+		for(BodyPart bp:BodyPart.values()){
+			mPartHolderMap.put(bp, new FrameHolder(bp));
+		}
 	}
 	
 	// ===========================================================

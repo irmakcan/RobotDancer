@@ -40,7 +40,7 @@ public abstract class AbstractFrameHolder {
 		return mEntityAngle[pSecond];
 	}
 	
-	public BodyPart getmBodyPart() {
+	public BodyPart getBodyPart() {
 		return mBodyPart;
 	}
 	// ===========================================================
