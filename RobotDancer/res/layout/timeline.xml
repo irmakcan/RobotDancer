@@ -15,72 +15,12 @@
             android:orientation="horizontal" >
 
             <LinearLayout
+                android:id="@+id/layout_labels"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical" >
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="18dp"
-                    android:text="LEFT_UPPER_ARM"
-                    android:textSize="11dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:text="LEFT_FORE_ARM"
-                    android:textSize="11dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="6dp"
-                    android:text="RIGHT_UPPER_ARM"
-                    android:textSize="11dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="6dp"
-                    android:text="LEFT_UPPER_LEG"
-                    android:textSize="11dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="6dp"
-                    android:text="LEFT_FORE_LEG"
-                    android:textSize="11dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:text="RIGHT_UPPER_LEG"
-                    android:textSize="11dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="6dp"
-                    android:text="RIGHT_FORE_LEG"
-                    android:textSize="11dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="6dp"
-                    android:text="HEAD"
-                    android:textSize="11dp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingTop="7dp"
-                    android:text="BODY"
-                    android:textSize="11dp" />
+                <!-- Labels here -->
             </LinearLayout>
 
             <HorizontalScrollView
@@ -96,11 +36,25 @@
         </LinearLayout>
     </ScrollView>
 
-    <Button android:id="@+id/button_start"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:text="Start Dancing!"
-        android:textSize="9dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" 
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/button_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Clear Timeline"
+            android:textSize="9dp" />
+
+        <Button
+            android:id="@+id/button_start"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:text="Start Dancing!"
+            android:textSize="9dp" />
+    </LinearLayout>
 
 </LinearLayout>

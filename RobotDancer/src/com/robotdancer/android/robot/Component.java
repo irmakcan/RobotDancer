@@ -1,5 +1,8 @@
 package com.robotdancer.android.robot;
 
+import java.util.HashMap;
+
+import org.anddev.andengine.entity.IEntity;
 import org.anddev.andengine.entity.sprite.AnimatedSprite;
 import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
 
@@ -15,6 +18,7 @@ public class Component extends AnimatedSprite{
 	
 //	protected AnimatedSprite mAnimatedSprite;
 	protected BodyPart mBodyPart;
+	protected HashMap<BodyPart, IEntity> mChildMap = new HashMap<BodyPart, IEntity>(); 
 	
 	// ===========================================================
 	// Constructors
@@ -42,10 +46,24 @@ public class Component extends AnimatedSprite{
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
+	public void attachChild(IEntity pEntity, BodyPart pBodyPart){
+		this.attachChild(pEntity);
+		this.mChildMap.put(pBodyPart, pEntity);
+	}
+	
+	public void detachChild(IEntity pEntity, BodyPart pBodyPart){
+		this.detachChild(pEntity);
+		this.mChildMap.remove(pBodyPart);
+	}
+	
+	public HashMap<BodyPart, IEntity> getChildMap(){
+		return this.mChildMap;
+	}
 	
 	// ===========================================================
 	// Methods
 	// ===========================================================
+	
 //	public void rotate(float pAngle){
 //		mAnimatedSprite.
 //	}

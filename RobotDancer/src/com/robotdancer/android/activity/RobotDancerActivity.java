@@ -1,5 +1,9 @@
 package com.robotdancer.android.activity;
 
+import java.io.IOException;
+
+import org.anddev.andengine.audio.music.Music;
+import org.anddev.andengine.audio.music.MusicFactory;
 import org.anddev.andengine.engine.Engine;
 import org.anddev.andengine.engine.camera.Camera;
 import org.anddev.andengine.engine.options.EngineOptions;
@@ -7,10 +11,7 @@ import org.anddev.andengine.engine.options.EngineOptions.ScreenOrientation;
 import org.anddev.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.anddev.andengine.entity.IEntity;
 import org.anddev.andengine.entity.modifier.IEntityModifier.IEntityModifierListener;
-import org.anddev.andengine.entity.modifier.ParallelEntityModifier;
-import org.anddev.andengine.entity.modifier.RotationByModifier;
 import org.anddev.andengine.entity.modifier.RotationModifier;
-import org.anddev.andengine.entity.modifier.ScaleModifier;
 import org.anddev.andengine.entity.modifier.SequenceEntityModifier;
 import org.anddev.andengine.entity.scene.Scene;
 import org.anddev.andengine.entity.scene.background.ColorBackground;
@@ -20,12 +21,14 @@ import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.anddev.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.anddev.andengine.opengl.texture.region.TiledTextureRegion;
 import org.anddev.andengine.ui.activity.BaseGameActivity;
+import org.anddev.andengine.util.Debug;
 import org.anddev.andengine.util.modifier.IModifier;
 
 import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.robotdancer.android.robot.BodyPart;
+import com.robotdancer.android.robot.Brain;
 import com.robotdancer.android.robot.Component;
 
 public class RobotDancerActivity extends BaseGameActivity {
@@ -57,6 +60,8 @@ public class RobotDancerActivity extends BaseGameActivity {
 	private TiledTextureRegion mRightUpperLegTextureRegion;
 	private TiledTextureRegion mLeftLowerLegTextureRegion;
 	private TiledTextureRegion mRightLowerLegTextureRegion;
+	
+	private Music mMusic;
 
 	// ===========================================================
 	// Constructors
@@ -73,11 +78,19 @@ public class RobotDancerActivity extends BaseGameActivity {
 	@Override
 	public Engine onLoadEngine() {
 		this.mCamera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
-		return new Engine(new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.mCamera));
+		return new Engine(new EngineOptions(true, ScreenOrientation.LANDSCAPE, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), this.mCamera).setNeedsMusic(true));
 	}
 
 	@Override
 	public void onLoadResources() {
+		MusicFactory.setAssetBasePath("mfx/");
+        try {
+                this.mMusic = MusicFactory.createMusicFromAsset(this.mEngine.getMusicManager(), this, "wagner_the_ride_of_the_valkyries.ogg");
+                this.mMusic.setLooping(true);
+        } catch (final IOException e) {
+                Debug.e(e);
+        }
+		
 		// Load Head
 		this.mBitmapTextureAtlas = new BitmapTextureAtlas(128, 128, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
@@ -142,72 +155,59 @@ public class RobotDancerActivity extends BaseGameActivity {
 		scene.setBackground(new ColorBackground(0.39804f, 0.6274f, 0.8784f));
 
 		
-		mBody = new Component(100, 120, mBodyTextureRegion, BodyPart.BODY);
+		mBody = new Component(0, 120, mBodyTextureRegion, BodyPart.BODY_ROTATE);
+		mBody.setPosition(CAMERA_WIDTH/2 - mBody.getWidth()/2, 120);
 		
 		// Insert head
 		Component head = new Component(mBody.getWidth()/2-mHeadTextureRegion.getWidth()/2, 
 				-mHeadTextureRegion.getHeight(), 
 				mHeadTextureRegion, BodyPart.HEAD);
 		head.setRotationCenter(head.getWidth()/2, head.getHeight());
-		mBody.attachChild(head);
+		mBody.attachChild(head, head.getBodyPart());
 		
 		// Insert Upper Left Arm
 		Component leftUpperArm = new Component(-70, 5, mLeftUpperArmTextureRegion, BodyPart.LEFT_UPPER_ARM);
 		leftUpperArm.setRotationCenter(leftUpperArm.getWidth(), 3);
-		mBody.attachChild(leftUpperArm);
+		mBody.attachChild(leftUpperArm, leftUpperArm.getBodyPart());
 		
 		// Insert Upper Right Arm
 		Component rightUpperArm = new Component(mBody.getWidth() - 4, 7, mRightUpperArmTextureRegion, BodyPart.RIGHT_UPPER_ARM);
 		rightUpperArm.setRotationCenter(0, 3);
-		mBody.attachChild(rightUpperArm);
+		mBody.attachChild(rightUpperArm, rightUpperArm.getBodyPart());
 		
 		// Insert Fore Left Arm
 		Component leftLowerArm = new Component(0, leftUpperArm.getHeight() - 10, mLeftLowerArmTextureRegion, BodyPart.LEFT_FORE_ARM);
 		leftLowerArm.setRotationCenter(leftLowerArm.getWidth()/2, 0);
-		leftUpperArm.attachChild(leftLowerArm);
+		leftUpperArm.attachChild(leftLowerArm, leftLowerArm.getBodyPart());
 		
 		// TODO Insert Fore Left Arm
 		Component rightLowerArm = new Component(rightUpperArm.getWidth() - 34, rightUpperArm.getHeight() - 10, mRightLowerArmTextureRegion, BodyPart.RIGHT_FORE_ARM);
 		rightLowerArm.setRotationCenter(rightLowerArm.getWidth()/2, 0);
-		rightUpperArm.attachChild(rightLowerArm);
+		rightUpperArm.attachChild(rightLowerArm, rightLowerArm.getBodyPart());
 		
 		// Insert Upper Left Leg
 		Component leftUpperLeg = new Component(16, mBody.getHeight(), mLeftUpperLegTextureRegion, BodyPart.LEFT_UPPER_LEG);
 		leftUpperLeg.setRotationCenter(leftUpperLeg.getWidth()/2, 0);
-		mBody.attachChild(leftUpperLeg);
+		mBody.attachChild(leftUpperLeg, leftUpperLeg.getBodyPart());
 		
 		// Insert Upper Right Leg TODO
 		Component rightUpperLeg = new Component(77, mBody.getHeight(), mRightUpperLegTextureRegion, BodyPart.RIGHT_UPPER_LEG);
 		rightUpperLeg.setRotationCenter(rightUpperLeg.getWidth()/2, 0);
-		mBody.attachChild(rightUpperLeg);
+		mBody.attachChild(rightUpperLeg, rightUpperLeg.getBodyPart());
 		
 		// Insert Lower Left Leg
 		Component leftLowerLeg = new Component(0, leftUpperLeg.getHeight(), mLeftLowerLegTextureRegion, BodyPart.LEFT_FORE_LEG);
 		leftLowerLeg.setRotationCenter(leftLowerLeg.getWidth()/2, 0);
-		leftUpperLeg.attachChild(leftLowerLeg);
+		leftUpperLeg.attachChild(leftLowerLeg, leftLowerLeg.getBodyPart());
 		
 		// Insert Lower Right Leg
 		Component rightLowerLeg = new Component(0, rightUpperLeg.getHeight(), mRightLowerLegTextureRegion, BodyPart.RIGHT_FORE_LEG);
 		rightLowerLeg.setRotationCenter(rightLowerLeg.getWidth()/2, 0);
-		rightUpperLeg.attachChild(rightLowerLeg);
+		rightUpperLeg.attachChild(rightLowerLeg, rightLowerLeg.getBodyPart());
 		
+		
+		scene.setPosition(scene.getX() + (CAMERA_WIDTH/2 - mBody.getWidth()/2), scene.getX());
 		scene.attachChild(mBody);
-//		final AnimatedSprite kafa1 = new AnimatedSprite(30, 30, mKafaTextureRegion);
-		
-//		final SequenceEntityModifier entitiyModifer1 = new SequenceEntityModifier(
-//			new RotationModifier(10, kafa1.getRotation(), 3600)
-//		);
-//		kafa1.registerEntityModifier(entitiyModifer1);
-//		scene.attachChild(kafa1);
-		
-//		final AnimatedSprite face1 = new AnimatedSprite(centerX - 100, centerY, this.mFaceTextureRegion);
-//		face1.setRotationCenter(0, 0);
-//		face1.setScaleCenter(0, 0);
-//		face1.animate(100);
-//
-//		final AnimatedSprite face2 = new AnimatedSprite(centerX + 100, centerY, this.mFaceTextureRegion);
-//		face2.animate(100);
-
 		
 		final SequenceEntityModifier entityModifier = new SequenceEntityModifier(
 				new IEntityModifierListener() {
@@ -243,35 +243,9 @@ public class RobotDancerActivity extends BaseGameActivity {
 //				)
 				new RotationModifier(8, 0, 3000)
 		);
-		final SequenceEntityModifier entityModifier2 = new SequenceEntityModifier(new RotationModifier(6, 0, 3000));
-		rightUpperArm.registerEntityModifier(entityModifier2);
 		
-		rightLowerArm.registerEntityModifier(entityModifier);
-		
-		final SequenceEntityModifier entityModifier3 = new SequenceEntityModifier(
-				new RotationModifier(1, 0, 30),
-				new RotationModifier(1, 0, -30),
-				new RotationModifier(1, 0, 30),
-				new RotationModifier(1, 0, -30),
-				new RotationModifier(1, 0, 30),
-				new RotationModifier(1, 0, -30),
-				new RotationModifier(1, 0, 30),
-				new RotationModifier(1, 0, -30)
-		);
-		
-		rightUpperLeg.registerEntityModifier(entityModifier3);
-//		face1.registerEntityModifier(entityModifier);
-//		face2.registerEntityModifier(entityModifier.deepCopy());
-
-//		scene.attachChild(face1);
-//		scene.attachChild(face2);
-
-		/* Create some not-modified sprites, that act as fixed references to the modified ones. */
-//		final AnimatedSprite face1Reference = new AnimatedSprite(centerX - 100, centerY, this.mFaceTextureRegion);
-//		final AnimatedSprite face2Reference = new AnimatedSprite(centerX + 100, centerY, this.mFaceTextureRegion);
-//
-//		scene.attachChild(face1Reference);
-//		scene.attachChild(face2Reference);
+		mMusic.play();
+		Brain.generateSequences(mBody);
 
 		return scene;
 	}

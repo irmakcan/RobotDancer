@@ -1,6 +1,6 @@
 package com.robotdancer.android.timeline;
 
-import android.widget.Button;
+import android.widget.TextView;
 
 import com.robotdancer.android.activity.TimeLineActivity;
 import com.robotdancer.android.robot.BodyPart;
@@ -14,7 +14,9 @@ public class FrameHolder extends AbstractFrameHolder {
 	@Override
 	public void setAngleAt(int pSecond, float pAngle) {
 		super.setAngleAt(pSecond, pAngle);
-		Button b = TimeLineActivity.getButtonMap().get(getBodyPart()).get(pSecond);
-		b.setText(Float.toString(pAngle));
+		
+		TextView b = TimeLineActivity.getButtonMap().get(getBodyPart()).get(pSecond);
+		b.setText(Integer.toString((int)pAngle));
+		
 	}
 }

@@ -25,7 +25,11 @@ public class TimeLine {
 	// Singleton
 	private TimeLine() {
 		for(BodyPart bp:BodyPart.values()){
-			mPartHolderMap.put(bp, new FrameHolder(bp));
+			if(bp == BodyPart.BODY_MOVE){
+				mPartHolderMap.put(bp, new BodyFrameHolder(bp));
+			}else{
+				mPartHolderMap.put(bp, new FrameHolder(bp));
+			}
 		}
 	}
 	
@@ -42,6 +46,10 @@ public class TimeLine {
 	
 	public AbstractFrameHolder getFrameHolder(BodyPart pBodyPart){
 		return mPartHolderMap.get(pBodyPart);
+	}
+	
+	public void setFrameHolder(BodyPart pBodyPart, AbstractFrameHolder pAbstractFrameHolder){
+		mPartHolderMap.put(pBodyPart, pAbstractFrameHolder);
 	}
 	
 	// ===========================================================
