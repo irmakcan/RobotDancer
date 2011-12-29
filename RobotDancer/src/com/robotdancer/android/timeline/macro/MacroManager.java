@@ -1,5 +1,6 @@
 package com.robotdancer.android.timeline.macro;
 
+import com.robotdancer.android.activity.TimeLineActivity;
 import com.robotdancer.android.robot.BodyPart;
 import com.robotdancer.android.timeline.AbstractFrameHolder;
 import com.robotdancer.android.timeline.BodyFrameHolder;
@@ -34,6 +35,9 @@ public class MacroManager {
 			AbstractFrameHolder fh = TimeLine.getInstance().getFrameHolder(bp);
 			Float[] f = pIMacro.getMacro().get(bp);
 			for(int i=0;i < pIMacro.getDuration();i++){
+				if(pSec+i >= TimeLineActivity.MAX_TIMELINE){
+					break;
+				}
 				fh.setAngleAt(pSec+i, f[i]);
 			}
 			TimeLine.getInstance().setFrameHolder(bp, fh);
@@ -41,6 +45,9 @@ public class MacroManager {
 				BodyFrameHolder bfh = (BodyFrameHolder)TimeLine.getInstance().getFrameHolder(bp);
 				Float[] fl = pIMacro.getMacro().get(bp);
 				for(int i=0;i < pIMacro.getDuration();i++){
+					if(pSec+i >= TimeLineActivity.MAX_TIMELINE){
+						break;
+					}
 					bfh.setPositionAt(pSec+i, fl[i]);
 				}
 				TimeLine.getInstance().setFrameHolder(bp, bfh);
